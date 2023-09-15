@@ -1,0 +1,14 @@
+# Use an official lightweight Node.js runtime as the base image, for basics websites
+FROM node:14-slim
+
+# Create a directory to store your project files
+WORKDIR /app
+
+# Copy your HTML, CSS, and JavaScript files into the container i am using html
+COPY index.html .
+
+# Expose a port if your application requires it (adjust the port as needed)
+EXPOSE 80
+
+# Define the command to run your application (in this case, a simple HTTP server)
+CMD [ "npx", "http-server", "-p", "80" ]
