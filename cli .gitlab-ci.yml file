@@ -1,0 +1,39 @@
+stages:
+  - build
+  - test
+  - deploy
+
+variables:
+  # Define your environment variables here
+  AZURE_WEBAPP_NAME: "TaskManager"
+  AZURE_RESOURCE_GROUP: "3375_2"
+  AZURE_SP_CLIENT_ID: "$AZURE_CLIENT_ID"
+  AZURE_SP_CLIENT_SECRET: "$AZURE_CLIENT_SECRET"
+  AZURE_SP_TENANT_ID: "$AZURE_TENANT_ID"
+
+before_script:
+  - apt-get update -qy
+  - apt-get install -y azure-cli  # Install Azure CLI
+
+build:
+  stage: build
+  script:
+    - echo "Building the HTML webpage..."
+    # Add any build commands here (e.g., minification, optimization)
+
+test:
+  stage: test
+  script:
+    # Add test commands here, if needed
+    - echo "Running tests..."
+
+deploy:
+  stage: deploy
+  script:
+    - echo "Deploying to Azure Web App Service..."
+    - az login --service-principal -u $AZURE_SP_CLIENT_ID -p $AZURE_SP_CLIENT_SECRET --tenant $AZURE_SP_TENANT_ID
+    - mkdir deploy
+    - unzip code.zip -d deploy  # Unzip the code folder
+    - az webapp deployment source config-zip --resource-group $AZURE_RESOURCE_GROUP --name $AZURE_WEBAPP_NAME --src deploy
+  only:
+    - main  # Deploy only when changes are pushed to the 'main' branch
